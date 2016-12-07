@@ -30,7 +30,7 @@ function start() {
   // Only continue if WebGL is available and working
 
   if (gl) {
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);  // Clear to black, fully opaque
+    gl.clearColor(1.0, 1.0, 1.0, 1.0);  // Clear to white, fully opaque
     gl.clearDepth(1.0);                 // Clear everything
     gl.enable(gl.DEPTH_TEST);           // Enable depth testing
     gl.depthFunc(gl.LEQUAL);            // Near things obscure far things
@@ -215,13 +215,28 @@ function initBuffers() {
 //
 function initTextures() {
   cubeTexture = gl.createTexture();
-  cubeImage = new Image();
+
+  // Added by me.
+  var canvas = document.createElement('canvas');
+  canvas.width = 256;
+  canvas.height = 256;
+  var ctx = canvas.getContext('2d');
+  ctx.font = '40pt Helvetica';
+  ctx.fillStyle = 'blue';
+  ctx.fillText('I like traffic lights, especially where they are green.', 0, 200);
+  var image = canvas.toDataURL();
+
+  // Modified by me
+  cubeImage = document.getElementById('blah');
+  //cubeImage = new Image();
   cubeImage.onload = function() { handleTextureLoaded(cubeImage, cubeTexture); }
-  cubeImage.src = "cubetexture.png";
+  cubeImage.src = image;
+  //cubeImage.src = 'myimage.png';
 }
 
 function handleTextureLoaded(image, texture) {
   console.log("handleTextureLoaded, image = " + image);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
   gl.bindTexture(gl.TEXTURE_2D, texture);
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,
         gl.UNSIGNED_BYTE, image);
@@ -261,7 +276,7 @@ function drawScene() {
   // Save the current matrix, then rotate before we draw.
 
   mvPushMatrix();
-  mvRotate(cubeRotation, [1, 0, 1]);
+  // mvRotate(cubeRotation, [1, 0, 1]);
 
   // Draw the cube by binding the array buffer to the cube's vertices
   // array, setting attributes, and pushing it to GL.
